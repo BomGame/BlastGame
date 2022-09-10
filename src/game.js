@@ -1,27 +1,4 @@
-var cnv = document.getElementById("canvas");
-var ctx = cnv.getContext("2d");
-
 cnv.addEventListener('click', handlerClickCanvas);
-
-var wd = new Image();
-wd.src="assets/Window.png";
-var bg = new Image();
-bg.src = "assets/background.png";
-var candy = new Image();
-candy.src = "assets/assets_candy.png";
-var buttons = new Image();
-buttons.src = "assets/Button.png";
-var score = 0;
-var deadObjects = 0;
-var steps = 51;
-var finish = 100;
-var globalX=0, globalY=0;
-var flagMenu=true;
-var unlimit=false;
-
-var array = new Array();
-
-let pole=[];
 
 //отслеживание мыши
 cnv.addEventListener('mousemove', function (e) {
@@ -31,95 +8,7 @@ cnv.addEventListener('mousemove', function (e) {
 });
 //----------------------
 
-class Candy 
-{
-  constructor(picX, picY, color, x, y) 
-  {
-    this.picX = picX;
-    this.picY = picY;
-    this.color = color;
-    this.x = x;
-    this.y = y;
-    this.dis = 0;
-  }
-  picCords()
-  {
-    console.log(this.picX, this.picY);
-  }
-  cords(x, y)
-  {
-    this.x=x;
-    this.y=y;
-  }
-  X()
-  {
-    return this.x;
-  }
-  Y()
-  {
-    return this.y;
-  }
-  getDisplacement()
-  {
-    return this.dis;
-  }
-  setDisplacement(x)
-  {
-    this.dis+=x;
-  }
-  Color()
-  {
-    return this.color;
-  }
-  draw()
-  {
-    ctx.drawImage(candy, this.picX, this.picY, 100, 100, 30+30*this.x, 30+30*this.y+this.dis, 37, 37);
-  }
-  delit(i, j, c)
-  {
-    delet(i, j, c);
-  }
-}
 
-class Bomb extends Candy
-{
-  delit(i, j, c)
-  {
-    pole[i][j]=0;
-    
-    if(i-1>=0 && i+1<pole.length)
-    {
-      pole[i-1][j]=0;
-      pole[i+1][j]=0;
-    }
-    
-    if(j-1>=0 && j+1<pole[i].length)
-    {
-      pole[i][j+1]=0;
-      pole[i][j-1]=0;
-    }
-    
-    if(i-1>=0 && j-1>=0)
-    {
-      pole[i-1][j-1]=0;
-    }
-    
-    if(i-1>=0 && j+1<pole[i].length)
-    {      
-      pole[i-1][j+1]=0;
-    }
-      
-    if(i+1<pole.length && j-1>=0)
-    {
-      pole[i+1][j-1]=0;      
-    }
-      
-    if(i+1<pole.length && j+1<pole[i].length)
-    {
-      pole[i+1][j+1]=0;
-    }
-  }
-}
 
 //заполнение поля
 function randomPole() 
@@ -296,15 +185,73 @@ function menuLogic(e)
   }
 }
 
+function WinLogic(e) 
+{
+  array.splice(0,array.length);
+  pole = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0]
+  ];
+
+  if(e.clientX > 500 && e.clientY > 410 && e.clientX < 550 && e.clientY < 460)
+  {
+    flagMenu=true;
+  }
+}
+
+function OverLogic(e) 
+{
+  array.splice(0,array.length);
+  pole = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0]
+  ];
+
+  if(e.clientX > 500 && e.clientY > 410 && e.clientX < 550 && e.clientY < 460)
+  {
+    flagMenu=true;
+  }
+}
+
 //нажатие
 function handlerClickCanvas(e) 
 {
   if(flagMenu)
     menuLogic(e);
   else
+  {
     if(unlimit || finish-score > 0)
       if(steps > 0)
         gameLogic(e);
+    if(finish-score <= 0 && !unlimit)
+        WinLogic(e); 
+    if(steps == 0 && finish-score > 0)
+        OverLogic(e);
+  }
 }
 //---------
 
@@ -345,20 +292,20 @@ function gameplay()
   ctx.drawImage(wd, 3030, 940, 3980-3030, 1420-940, 450, 10, 180, 460);
   
   for(var i in array)
-    {
-      array[i].draw();
-    }
-    
-    ctx.fillText("Scores:", 460, 70, 150);
-    ctx.fillText(score, 460, 110, 150);
-    
-    ctx.fillText("Steps:", 460, 160, 150);
-    ctx.fillText(steps, 460, 200, 150);
-    
-    ctx.fillText("Mission:", 460, 250, 150);
-    ctx.fillText(finish, 460, 290, 150);
-    
-    anim();
+  {
+    array[i].draw();
+  }
+  
+  ctx.fillText("Scores:", 460, 70, 150);
+  ctx.fillText(score, 460, 110, 150);
+  
+  ctx.fillText("Steps:", 460, 160, 150);
+  ctx.fillText(steps, 460, 200, 150);
+  
+  ctx.fillText("Mission:", 460, 250, 150);
+  ctx.fillText(finish, 460, 290, 150);
+  
+  anim();
 }
 
 function gameOver() 
@@ -368,15 +315,31 @@ function gameOver()
   ctx.fillText("Game over", 100, 60, 150);
   ctx.fillText("Your scores:", 100, 170, 300);
   ctx.fillText(score, 100, 210, 300);
+  
+  x=500;
+  y=410;
+  if(globalX > x && globalY > y && globalX < x+100 && globalY < y+40)
+    ctx.drawImage(buttons, 3500, 1200, 180, 180, x, y, 50, 50);
+  else
+    ctx.drawImage(buttons, 3080, 1200, 180, 180, x, y, 50, 50);
 }
 
 function gameWin() 
 {
+  var x, y;
+
   ctx.drawImage(bg, 0, 0, cnv.width, cnv.height);
   ctx.drawImage(wd, 970, 2050, 800, 600, 10, 10, 470, 460);
   ctx.fillText("Winner!", 150, 60, 150);
   ctx.fillText("Your scores:", 100, 170, 300);
   ctx.fillText(score, 100, 210, 300);
+  
+  x=500;
+  y=410;
+  if(globalX > x && globalY > y && globalX < x+100 && globalY < y+40)
+    ctx.drawImage(buttons, 3500, 1200, 180, 180, x, y, 50, 50);
+  else
+    ctx.drawImage(buttons, 3080, 1200, 180, 180, x, y, 50, 50);
 }
 
 function mainMenu() 

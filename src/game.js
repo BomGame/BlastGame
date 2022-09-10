@@ -9,12 +9,27 @@ var bg = new Image();
 bg.src = "assets/background.png";
 var candy = new Image();
 candy.src = "assets/assets_candy.png";
+var buttons = new Image();
+buttons.src = "assets/Button.png";
 var score = 0;
 var deadObjects = 0;
+var steps = 51;
+var finish = 100;
+var globalX=0, globalY=0;
+var flagMenu=true;
+var unlimit=false;
 
 var array = new Array();
 
 let pole=[];
+
+//отслеживание мыши
+cnv.addEventListener('mousemove', function (e) {
+    globalX = e.pageX - e.target.offsetLeft,
+    globalY = e.pageY - e.target.offsetTop;
+    //console.log(x, y);
+});
+//----------------------
 
 class Candy 
 {
@@ -72,23 +87,31 @@ class Bomb extends Candy
   {
     pole[i][j]=0;
     
-    if(i-1>=0 && j-1>0)
+    if(i-1>=0 && i+1<pole.length)
     {
       pole[i-1][j]=0;
-      pole[i-1][j-1]=0;
+      pole[i+1][j]=0;
+    }
+    
+    if(j-1>=0 && j+1<pole[i].length)
+    {
+      pole[i][j+1]=0;
       pole[i][j-1]=0;
     }
     
-    if(i-1>0 && j+1<pole[i].length)
+    if(i-1>=0 && j-1>=0)
     {
-      pole[i][j+1]=0;
+      pole[i-1][j-1]=0;
+    }
+    
+    if(i-1>=0 && j+1<pole[i].length)
+    {      
       pole[i-1][j+1]=0;
     }
       
-    if(i+1<pole.length && j-1>0)
+    if(i+1<pole.length && j-1>=0)
     {
-      pole[i+1][j-1]=0;
-      pole[i+1][j]=0;
+      pole[i+1][j-1]=0;      
     }
       
     if(i+1<pole.length && j+1<pole[i].length)
@@ -112,7 +135,7 @@ function randomPole()
 }
 //-----------------
 
-//тестовая анимация
+//анимация
 function anim() 
 {
   for(var l in array)
@@ -125,7 +148,6 @@ function anim()
       //console.log(temp);
       if(pole[temp][array[l].X()] == 0)
       {
-        //console.log('test');
         array[l].setDisplacement(5);
         if(array[l].getDisplacement()>30)
         {
@@ -164,7 +186,6 @@ function deleteObject(y, x)
 
 function delet(i, j, c) 
 {
-  //console.log(pole);
   if(i-1>=0 && pole[i-1][j] == c)
   {
     pole[i][j]=0;
@@ -202,9 +223,11 @@ function testMatrix()
 }
 //---------------------
 
-//нажатие
-function handlerClickCanvas(e) 
+//логика уровня
+function gameLogic(e) 
 {
+  if(!unlimit)
+    steps--;
   var X=-1, Y=-1;
   //сравнение кооржинат
   for(var i=0; i<14; i++)
@@ -234,81 +257,196 @@ function handlerClickCanvas(e)
   //очки
   score+=deadObjects;
   deadObjects=0; 
-  console.log(score);
-}
-//---------
-
-randomPole();
-/*pole = [
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3],
-  [1,2,3,4,5,1,2,3,4,5,1,2,3]
-];*/
-
-ctx.fillStyle="#555555";
-ctx.font = "48px serif";
-ctx.fillText("Loading", cnv.width/2-100, cnv.height/2);
-
-
-var loading = 0;
-wd.onload = bg.onload = candy.onload = function () 
-{
-  loading++;                            
 }
 
-//-------------------------------------
-
-for (var i in pole)
+//логика меню
+function menuLogic(e) 
 {
-  for (var j in pole[i])
+  if(e.clientX > 110 && e.clientY > 110 && e.clientX < 205 && e.clientY < 150)
   {
-    switch (pole[i][j]) 
-    {
-      case 1: 
-        array.push(new Candy(0,0, 1, j, i));
-        break;
-      case 2:
-        array.push(new Candy(100, 0, 2, j, i));
-        break;
-      case 3:
-        array.push(new Candy(200, 0, 3, j, i));
-        break;
-      case 4:
-        array.push(new Candy(300, 0, 4, j, i));
-        break;
-      case 5:
-        array.push(new Candy(400, 0, 5, j, i));
-        break;
-    }
+    steps=14;
+    score=0;
+    finish=60;
+    flagMenu=false;
+  }
+  
+  if(e.clientX > 210 && e.clientY > 110 && e.clientX < 315 && e.clientY < 150)
+  {
+    steps=19;
+    score=0;
+    finish=100;
+    flagMenu=false;
+  }
+  
+  if(e.clientX > 110 && e.clientY > 180 && e.clientX < 205 && e.clientY < 220)
+  {
+    steps=30;
+    score=0;
+    finish=160;
+    flagMenu=false;
+  }
+  
+  if(e.clientX > 210 && e.clientY > 180 && e.clientX < 315 && e.clientY < 220)
+  {
+    unlimit=true;
+    steps=999;
+    score=0;
+    finish=0;
+    flagMenu=false;
   }
 }
 
-function game() 
+//нажатие
+function handlerClickCanvas(e) 
 {
-  if (loading == 3)
-  {
-    ctx.drawImage(bg, 0, 0, cnv.width, cnv.height);
-    ctx.drawImage(wd, 3030, 940, 3980-3030, 1420-940, 10, 10, 470, 460);
-    ctx.drawImage(wd, 3030, 940, 3980-3030, 1420-940, 450, 10, 180, 460);
-    
-    
-    for(var i in array)
+  if(flagMenu)
+    menuLogic(e);
+  else
+    if(unlimit || finish-score > 0)
+      if(steps > 0)
+        gameLogic(e);
+}
+//---------
+
+//randomPole();
+pole = [
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0]
+];
+
+ctx.font = "48px serif";
+ctx.fillText("Loading", cnv.width/2-100, cnv.height/2);
+
+//загрузка текстур
+var loading = 0;
+wd.onload = bg.onload = candy.onload = buttons.onload = function () 
+{
+  loading++;                            
+}
+//----------------
+
+//рисование сцены с игрой
+function gameplay() 
+{
+  ctx.drawImage(bg, 0, 0, cnv.width, cnv.height);
+  ctx.drawImage(wd, 3030, 940, 3980-3030, 1420-940, 10, 10, 470, 460);
+  ctx.drawImage(wd, 3030, 940, 3980-3030, 1420-940, 450, 10, 180, 460);
+  
+  for(var i in array)
     {
       array[i].draw();
     }
     
+    ctx.fillText("Scores:", 460, 70, 150);
+    ctx.fillText(score, 460, 110, 150);
+    
+    ctx.fillText("Steps:", 460, 160, 150);
+    ctx.fillText(steps, 460, 200, 150);
+    
+    ctx.fillText("Mission:", 460, 250, 150);
+    ctx.fillText(finish, 460, 290, 150);
+    
     anim();
+}
+
+function gameOver() 
+{
+  ctx.drawImage(bg, 0, 0, cnv.width, cnv.height);
+  ctx.drawImage(wd, 970, 2050, 800, 600, 10, 10, 470, 460);
+  ctx.fillText("Game over", 100, 60, 150);
+  ctx.fillText("Your scores:", 100, 170, 300);
+  ctx.fillText(score, 100, 210, 300);
+}
+
+function gameWin() 
+{
+  ctx.drawImage(bg, 0, 0, cnv.width, cnv.height);
+  ctx.drawImage(wd, 970, 2050, 800, 600, 10, 10, 470, 460);
+  ctx.fillText("Winner!", 150, 60, 150);
+  ctx.fillText("Your scores:", 100, 170, 300);
+  ctx.fillText(score, 100, 210, 300);
+}
+
+function mainMenu() 
+{
+  var x, y;
+  ctx.drawImage(bg, 0, 0, cnv.width, cnv.height);
+  ctx.drawImage(wd, 570, 1115, 480, 650, 10, 10, 470, 460);
+  
+  //normal
+  x=110;
+  y=110;
+  if(globalX > x && globalY > y && globalX < x+100 && globalY < y+40)
+    ctx.drawImage(buttons, 1070, 430, 440, 190, x, y, 100, 50);
+  else
+    ctx.drawImage(buttons, 160, 430, 440, 190, x, y, 100, 50);
+  ctx.fillText("Normal", x+10, y+35, 80);
+  
+  //hard
+  x=210;
+  y=110;
+  if(globalX > x && globalY > y && globalX < x+100 && globalY < y+40)
+    ctx.drawImage(buttons, 1070, 430, 440, 190, x, y, 100, 50);
+  else
+    ctx.drawImage(buttons, 160, 430, 440, 190, x, y, 100, 50);
+  ctx.fillText("Hard", x+10, y+35, 80);
+  
+  //fear
+  x=110;
+  y=180;
+  if(globalX > x && globalY > y && globalX < x+100 && globalY < y+40)
+    ctx.drawImage(buttons, 1070, 430, 440, 190, x, y, 100, 50);
+  else
+    ctx.drawImage(buttons, 160, 430, 440, 190, x, y, 100, 50);
+  ctx.fillText("Fear", x+10, y+35, 80);
+  
+  //unlimit
+  x=210;
+  y=180;
+  if(globalX > x && globalY > y && globalX < x+100 && globalY < y+40)
+    ctx.drawImage(buttons, 1070, 430, 440, 190, x, y, 100, 50);
+  else
+    ctx.drawImage(buttons, 160, 430, 440, 190, x, y, 100, 50);
+  ctx.fillText("Unlimit", x+10, y+35, 80);
+}
+
+//основная функция
+function game() 
+{
+  if (loading == 4)
+  {
+    if(flagMenu)
+    {
+      ctx.fillStyle="#ffffff";
+      ctx.font = "40px serif";
+      mainMenu();
+    }
+    else 
+    {
+      ctx.fillStyle="#555555";
+      ctx.font = "48px serif";
+      if(finish-score > 0 || unlimit)
+        if(steps > 0)
+          gameplay();
+      
+      if(steps == 0 && finish-score > 0)
+        gameOver();
+        
+      if(finish-score <= 0 && !unlimit)
+        gameWin(); 
+    }
   }
   requestAnimationFrame(game);
 }
